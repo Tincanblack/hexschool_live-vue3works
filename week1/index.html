@@ -56,7 +56,7 @@
 				</div>
 				<div class="col-md-6">
 					<h2>單一產品細節</h2>
-					<template v-if="temp.id">
+					<template v-if="temp.id"> <!-- 判斷temp的id確認item的資料是否成功複製進temp -->
 						<div class="card mb-3">
 							<img :src="temp.imageUrl" class="card-img-top primary-image" alt="主圖">
 							<div class="card-body">
@@ -147,6 +147,7 @@
 		},
 		methods: {
 			checkItemDetail(item) {
+				// 當點擊時取得點到的item並將資料複製到temp裡去
 				this.temp = { ...item };
 				console.log(this.temp);
 			}
