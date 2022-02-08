@@ -21,7 +21,7 @@
 				<div class="col-12">
 					<div class="list-group">
 						<div v-for="(week, index) in subjects" :key="week.title">
-							<a v-if="week.is_enabled" :href="week.url" class="list-group-item list-group-item-action d-flex gap-3 py-3">
+							<a v-if="week.is_enabled" :href="week.url" class="list-group-item list-group-item-action">
 								<div class="d-flex gap-2 justify-content-between">
 									<div v-if="week.is_enabled">
 										<h6 class="mb-0">{{week.title}}</h6>
