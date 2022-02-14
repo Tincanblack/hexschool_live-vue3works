@@ -18,7 +18,6 @@ const app = {
 			axios
 				.get(`${this.apiUrl}/api/${this.apiPath}/admin/products`)
 				.then((res) => {
-					console.log(res);
 					// 將收到的data資料展開至products
 					this.products = [...res.data.products];
 				})
@@ -28,6 +27,9 @@ const app = {
 				});
 		},
 		checkLogin() {
+			// 將token寫入至headers
+			const token = document.cookie.replace(/(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/, "$1");
+			axios.defaults.headers.common["Authorization"] = token;
 			axios
 				.post(`${this.apiUrl}/api/user/check`)
 				.then((res) => {
@@ -60,7 +62,6 @@ const app = {
 			} else if (action === "del") {
 				// 利用深拷貝將產品拷貝至template
 				this.targetProduct = JSON.parse(JSON.stringify(item));
-				console.log(this.targetProduct);
 				delProductModal.show();
 			}
 		},
@@ -76,12 +77,11 @@ const app = {
 			// AJAX
 			axios[method](url, { data: this.targetProduct })
 				.then((res) => {
-					console.log(res.data.message);
 					this.getProductsList();
 					productModal.hide();
 				})
 				.catch((err) => {
-					console.log(err);
+					alert(err.data.message);
 				});
 		},
 		delProduct() {
@@ -89,19 +89,15 @@ const app = {
 			axios
 				.delete(`${this.apiUrl}/api/${this.apiPath}/admin/product/${this.targetProduct.id}`)
 				.then((res) => {
-					console.log(res.data.message);
 					this.getProductsList();
 					delProductModal.hide();
 				})
 				.catch((err) => {
-					console.log(err);
+					alert(err.data.message);
 				});
 		},
 	},
 	mounted() {
-		// Vue掛載完成時將token寫入至headers
-		const token = document.cookie.replace(/(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/, "$1");
-		axios.defaults.headers.common["Authorization"] = token;
 		this.checkLogin();
 
 		// 建立 bootstrap modal, 賦予至變數上
