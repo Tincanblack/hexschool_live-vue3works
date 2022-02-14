@@ -43,7 +43,7 @@
 						<td>{{item.title}}</td>
 						<td>{{item.origin_price}}</td>
 						<td>{{item.price}}</td>
-						<td class="text-end">
+						<td class="text-center">
 							<span class="text-success" v-if="item.is_enabled === 1">啟用</span>
 							<span v-else>未啟用</span>
 						</td>
@@ -124,7 +124,7 @@
 								</div>
 								<div class="mb-3">
 									<label for="content" class="form-label">說明內容</label>
-									<textarea id="description" type="text" class="form-control" placeholder="請輸入說明內容"></textarea>
+									<textarea id="description" type="text" class="form-control" placeholder="請輸入說明內容" v-model="targetProduct.content"></textarea>
 								</div>
 								<div class="mb-3">
 									<div class="form-check">

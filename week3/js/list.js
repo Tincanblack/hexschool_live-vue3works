@@ -1,11 +1,11 @@
 import { createApp } from "https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.9/vue.esm-browser.js";
+const apiUrl = "https://vue3-course-api.hexschool.io/v2";
+const apiPath = "works";
 let productModal = null;
 let delProductModal = null;
 const app = {
 	data() {
 		return {
-			apiUrl: "https://vue3-course-api.hexschool.io/v2",
-			apiPath: "works",
 			targetProduct: {
 				imagesUrl: [],
 			},
@@ -16,7 +16,7 @@ const app = {
 	methods: {
 		getProductsList() {
 			axios
-				.get(`${this.apiUrl}/api/${this.apiPath}/admin/products`)
+				.get(`${apiUrl}/api/${apiPath}/admin/products`)
 				.then((res) => {
 					// 將收到的data資料展開至products
 					this.products = [...res.data.products];
@@ -31,7 +31,7 @@ const app = {
 			const token = document.cookie.replace(/(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/, "$1");
 			axios.defaults.headers.common["Authorization"] = token;
 			axios
-				.post(`${this.apiUrl}/api/user/check`)
+				.post(`${apiUrl}/api/user/check`)
 				.then((res) => {
 					// 如果成功驗證登入狀態則執行將產品列表render出來
 					this.getProductsList();
@@ -67,11 +67,11 @@ const app = {
 		},
 		updateProduct() {
 			// 新增產品 setting
-			let url = `${this.apiUrl}/api/${this.apiPath}/admin/product`;
+			let url = `${apiUrl}/api/${apiPath}/admin/product`;
 			let method = "post";
 			// 更新產品 setting
 			if (!this.isNew) {
-				url = `${this.apiUrl}/api/${this.apiPath}/admin/product/${this.targetProduct.id}`;
+				url = `${apiUrl}/api/${apiPath}/admin/product/${this.targetProduct.id}`;
 				method = "put";
 			}
 			// AJAX
@@ -87,7 +87,7 @@ const app = {
 		delProduct() {
 			// 刪除產品
 			axios
-				.delete(`${this.apiUrl}/api/${this.apiPath}/admin/product/${this.targetProduct.id}`)
+				.delete(`${apiUrl}/api/${apiPath}/admin/product/${this.targetProduct.id}`)
 				.then((res) => {
 					this.getProductsList();
 					delProductModal.hide();
