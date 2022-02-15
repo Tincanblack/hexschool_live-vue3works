@@ -1,25 +1,31 @@
 import { createApp } from "https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.9/vue.esm-browser.js";
+import pagination from "./pagination.js";
 const apiUrl = "https://vue3-course-api.hexschool.io/v2";
 const apiPath = "works";
 let productModal = null;
 let delProductModal = null;
-const app = {
+const app = createApp({
+	components: {
+		pagination,
+	},
 	data() {
 		return {
 			targetProduct: {
 				imagesUrl: [],
 			},
 			products: [],
+			pagination: {},
 			isNew: false,
 		};
 	},
 	methods: {
-		getProductsList() {
+		getProductsList(page = 1) {
 			axios
-				.get(`${apiUrl}/api/${apiPath}/admin/products`)
+				.get(`${apiUrl}/api/${apiPath}/admin/products/?page=${page}`)
 				.then((res) => {
 					// 將收到的data資料展開至products
-					this.products = [...res.data.products];
+					this.products = res.data.products;
+					this.pagination = res.data.pagination;
 				})
 				.catch((err) => {
 					// 跳出錯誤訊息
@@ -65,25 +71,6 @@ const app = {
 				delProductModal.show();
 			}
 		},
-		updateProduct() {
-			// 新增產品 setting
-			let url = `${apiUrl}/api/${apiPath}/admin/product`;
-			let method = "post";
-			// 更新產品 setting
-			if (!this.isNew) {
-				url = `${apiUrl}/api/${apiPath}/admin/product/${this.targetProduct.id}`;
-				method = "put";
-			}
-			// AJAX
-			axios[method](url, { data: this.targetProduct })
-				.then((res) => {
-					this.getProductsList();
-					productModal.hide();
-				})
-				.catch((err) => {
-					alert(err.data.message);
-				});
-		},
 		delProduct() {
 			// 刪除產品
 			axios
@@ -105,5 +92,35 @@ const app = {
 		// 刪除商品modal
 		delProductModal = new bootstrap.Modal(document.getElementById("delProductModal"));
 	},
-};
-createApp(app).mount("#app");
+});
+
+app.component("product-modal", {
+	props: ["targetProduct"],
+	template: `#templateProductModal`,
+	methods: {
+		updateProduct() {
+			// 新增產品 setting
+			let url = `${apiUrl}/api/${apiPath}/admin/product`;
+			let method = "post";
+			// 更新產品 setting
+			if (!this.isNew) {
+				url = `${apiUrl}/api/${apiPath}/admin/product/${this.targetProduct.id}`;
+				method = "put";
+			}
+			// AJAX
+			axios[method](url, { data: this.targetProduct })
+				.then((res) => {
+					// this.getProductsList();
+					this.$emit('get-product-list');
+					productModal.hide();
+				})
+				.catch((err) => {
+					alert(err.data.message);
+				});
+		},
+	},
+});
+
+app.component("del-product-modal")
+
+app.mount("#app");
