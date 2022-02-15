@@ -71,18 +71,6 @@ const app = createApp({
 				delProductModal.show();
 			}
 		},
-		delProduct() {
-			// 刪除產品
-			axios
-				.delete(`${apiUrl}/api/${apiPath}/admin/product/${this.targetProduct.id}`)
-				.then((res) => {
-					this.getProductsList();
-					delProductModal.hide();
-				})
-				.catch((err) => {
-					alert(err.data.message);
-				});
-		},
 	},
 	mounted() {
 		this.checkLogin();
@@ -94,8 +82,10 @@ const app = createApp({
 	},
 });
 
+// 將 產品新增/更新 modal元件做全域註冊
+// html上元件名稱
 app.component("product-modal", {
-	props: ["targetProduct"],
+	props: ["targetProduct"], // 將外層targetProduct傳入到元件內
 	template: `#templateProductModal`,
 	methods: {
 		updateProduct() {
@@ -110,8 +100,7 @@ app.component("product-modal", {
 			// AJAX
 			axios[method](url, { data: this.targetProduct })
 				.then((res) => {
-					// this.getProductsList();
-					this.$emit('get-product-list');
+					this.$emit("get-product-list"); //向外層呼叫getProductList()
 					productModal.hide();
 				})
 				.catch((err) => {
@@ -121,6 +110,25 @@ app.component("product-modal", {
 	},
 });
 
-app.component("del-product-modal")
+// 將 產品刪除 modal元件做全域註冊
+// html上元件名稱
+app.component("del-product-modal", {
+	props: ["targetProduct"], // 將外層targetProduct傳入到元件內
+	template: `#templateDelProductModal`,
+	methods: {
+		// 刪除產品
+		delProduct() {
+			axios
+				.delete(`${apiUrl}/api/${apiPath}/admin/product/${this.targetProduct.id}`)
+				.then((res) => {
+					this.$emit("get-product-list"); //向外層呼叫getProductList()
+					delProductModal.hide();
+				})
+				.catch((err) => {
+					alert(err.data.message);
+				});
+		},
+	},
+});
 
 app.mount("#app");
