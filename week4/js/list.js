@@ -85,7 +85,7 @@ const app = createApp({
 // 將 產品新增/更新 modal元件做全域註冊
 // html上元件名稱
 app.component("product-modal", {
-	props: ["targetProduct"], // 將外層targetProduct傳入到元件內
+	props: ["targetProduct", 'isNew'], // 將外層targetProduct傳入到元件內
 	template: `#templateProductModal`,
 	methods: {
 		updateProduct() {
