@@ -23,7 +23,7 @@ const app = createApp({
 			axios
 				.get(`${apiUrl}/api/${apiPath}/admin/products/?page=${page}`)
 				.then((res) => {
-					// 將收到的data資料展開至products
+					// 將收到的data賦予給products, pagination
 					this.products = res.data.products;
 					this.pagination = res.data.pagination;
 				})
@@ -85,7 +85,7 @@ const app = createApp({
 // 將 產品新增/更新 modal元件做全域註冊
 // html上元件名稱
 app.component("product-modal", {
-	props: ["targetProduct", "isNew"], // 將外層targetProduct傳入到元件內
+	props: ["targetProduct", "isNew"], // 將外層targetProduct, isNew參數傳入到元件內
 	template: `#templateProductModal`,
 	methods: {
 		updateProduct() {
