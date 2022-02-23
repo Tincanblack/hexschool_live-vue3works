@@ -1,24 +1,23 @@
-import { createApp } from "https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.9/vue.esm-browser.js";
+// import { createApp } from "https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.9/vue.esm-browser.js";
 const apiUrl = "https://vue3-course-api.hexschool.io/v2";
 const apiPath = "works";
 
-const { defineRule, Form, Field, ErrorMessage, configure } = VeeValidate;
-const { required, email, min, max } = VeeValidateRules;
-const { localize, loadLocaleFromURL } = VeeValidateI18n;
+VeeValidate.defineRule("email", VeeValidateRules["email"]);
+VeeValidate.defineRule("required", VeeValidateRules["required"]);
 
-defineRule("required", required);
-defineRule("email", email);
-defineRule("min", min);
-defineRule("max", max);
-
-loadLocaleFromURL("https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/zh_TW.json");
-
-configure({
-	// 用來做一些設定
-	generateMessage: localize("zh_TW"), //啟用 locale
+Object.keys(VeeValidateRules).forEach((rule) => {
+	if (rule !== "default") {
+		VeeValidate.defineRule(rule, VeeValidateRules[rule]);
+	}
 });
 
-const app = createApp({
+// Activate the locale
+VeeValidate.configure({
+	generateMessage: VeeValidateI18n.localize("zh_TW"),
+	validateOnInput: true, // 調整為：輸入文字時，就立即進行驗證
+});
+
+const app = Vue.createApp({
 	components: {},
 	data() {
 		return {
@@ -164,12 +163,16 @@ app.component("product-detail-modal", {
 		addToCart() {
 			this.$emit("add-cart", this.selectProduct.id, this.qty);
 			this.closeModal();
-		}
+		},
 	},
 	mounted() {
 		// 建立 bootstrap modal 實體, 賦予至modal
 		this.modal = new bootstrap.Modal(this.$refs.modal);
 	},
 });
+
+app.component("VForm", VeeValidate.Form);
+app.component("VField", VeeValidate.Field);
+app.component("ErrorMessage", VeeValidate.ErrorMessage);
 
 app.mount("#app");
