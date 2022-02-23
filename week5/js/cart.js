@@ -11,6 +11,9 @@ Object.keys(VeeValidateRules).forEach((rule) => {
 	}
 });
 
+// 讀取外部的資源
+VeeValidateI18n.loadLocaleFromURL("https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/zh_TW.json");
+
 // Activate the locale
 VeeValidate.configure({
 	generateMessage: VeeValidateI18n.localize("zh_TW"),
@@ -25,6 +28,15 @@ const app = Vue.createApp({
 			products: [],
 			selectItemId: "",
 			isLoadingItem: "",
+			form: {
+				user: {
+					email: "",
+					name: "",
+					phone: "",
+					address: "",
+				},
+				message: "",
+			},
 		};
 	},
 	methods: {
@@ -117,6 +129,7 @@ const app = Vue.createApp({
 					alert(err.data.message);
 				});
 		},
+		onSubmit() {},
 	},
 	mounted() {
 		this.getProductsList();
