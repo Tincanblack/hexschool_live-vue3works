@@ -14,7 +14,7 @@
 	<div id="app">
 		<div class="container">
 			<div class="mt-4">
-				<product-detail-modal ref="productDetailModal" :id="selectItemId" @add-cart="addToCart"></product-detail-modal>
+				<product-detail-modal ref="productDetailModal" :id="selectItemId" :api-url="apiUrl" :api-path="apiPath" @add-cart="addToCart"></product-detail-modal>
 				<table class="table align-middle">
 					<thead>
 						<tr>

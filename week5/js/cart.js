@@ -1,28 +1,34 @@
-const apiUrl = "https://vue3-course-api.hexschool.io/v2";
-const apiPath = "works";
+import productDetailModal from "./components/productDetailModal.js";
+import { apiUrl, apiPath } from "./config.js";
 
-VeeValidate.defineRule("email", VeeValidateRules["email"]);
-VeeValidate.defineRule("required", VeeValidateRules["required"]);
+const { defineRule, Form, Field, ErrorMessage, configure } = VeeValidate;
+const { required, email, min, max } = VeeValidateRules;
+const { localize, loadLocaleFromURL } = VeeValidateI18n;
 
-Object.keys(VeeValidateRules).forEach((rule) => {
-	if (rule !== "default") {
-		VeeValidate.defineRule(rule, VeeValidateRules[rule]);
-	}
-});
+// 定義規則
+defineRule("required", required);
+defineRule("email", email);
+defineRule("min", min);
+defineRule("max", max);
 
-// 讀取外部的資源
-VeeValidateI18n.loadLocaleFromURL("https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/zh_TW.json");
+// 載入語系
+loadLocaleFromURL("https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/zh_TW.json");
 
-// Activate the locale
-VeeValidate.configure({
-	generateMessage: VeeValidateI18n.localize("zh_TW"),
-	validateOnInput: true, // 調整為：輸入文字時，就立即進行驗證
+configure({
+	generateMessage: localize("zh_TW"), //啟用 locale
 });
 
 const app = Vue.createApp({
-	components: {},
+	// 將 VeeValidation 做區域註冊
+	components: {
+		VForm: Form,
+		VField: Field,
+		ErrorMessage: ErrorMessage,
+	},
 	data() {
 		return {
+			apiUrl,
+			apiPath,
 			cartsData: {},
 			products: [],
 			selectItemId: "",
@@ -137,54 +143,6 @@ const app = Vue.createApp({
 });
 
 // 將 產品詳情 modal元件做全域註冊
-app.component("product-detail-modal", {
-	props: ["id"],
-	template: `#userProductModal`,
-	data() {
-		return {
-			modal: {},
-			selectProduct: {},
-			qty: 1,
-		};
-	},
-	watch: {
-		// 監控id當有變化時執行getProduct()
-		id() {
-			this.getProduct();
-		},
-	},
-	methods: {
-		openModal() {
-			this.modal.show();
-		},
-		closeModal() {
-			this.modal.hide();
-		},
-		getProduct() {
-			axios
-				.get(`${apiUrl}/api/${apiPath}/product/${this.id}`)
-				.then((res) => {
-					// 將收到的data資料展賦予給products
-					this.selectProduct = res.data.product;
-				})
-				.catch((err) => {
-					// 跳出錯誤訊息
-					alert(err.data.message);
-				});
-		},
-		addToCart() {
-			this.$emit("add-cart", this.selectProduct.id, this.qty);
-			this.closeModal();
-		},
-	},
-	mounted() {
-		// 建立 bootstrap modal 實體, 賦予至modal
-		this.modal = new bootstrap.Modal(this.$refs.modal);
-	},
-});
-
-app.component("VForm", VeeValidate.Form);
-app.component("VField", VeeValidate.Field);
-app.component("ErrorMessage", VeeValidate.ErrorMessage);
+app.component("product-detail-modal", productDetailModal);
 
 app.mount("#app");
