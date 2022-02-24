@@ -1,5 +1,6 @@
 import { createApp } from "https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.9/vue.esm-browser.js";
 import pagination from "./pagination.js";
+import userProductModal from "./components/userProductModal.js";
 const apiUrl = "https://vue3-course-api.hexschool.io/v2";
 const apiPath = "works";
 let productModal = null;
@@ -81,54 +82,5 @@ const app = createApp({
 		delProductModal = new bootstrap.Modal(document.getElementById("delProductModal"));
 	},
 });
-
-// 將 產品新增/更新 modal元件做全域註冊
-// html上元件名稱
-app.component("product-modal", {
-	props: ["targetProduct", "isNew"], // 將外層targetProduct, isNew參數傳入到元件內
-	template: `#templateProductModal`,
-	methods: {
-		updateProduct() {
-			// 新增產品 setting
-			let url = `${apiUrl}/api/${apiPath}/admin/product`;
-			let method = "post";
-			// 更新產品 setting
-			if (!this.isNew) {
-				url = `${apiUrl}/api/${apiPath}/admin/product/${this.targetProduct.id}`;
-				method = "put";
-			}
-			// AJAX
-			axios[method](url, { data: this.targetProduct })
-				.then((res) => {
-					this.$emit("get-product-list"); //向外層呼叫getProductList()
-					productModal.hide();
-				})
-				.catch((err) => {
-					alert(err.data.message);
-				});
-		},
-	},
-});
-
-// 將 產品刪除 modal元件做全域註冊
-// html上元件名稱
-app.component("del-product-modal", {
-	props: ["targetProduct"], // 將外層targetProduct傳入到元件內
-	template: `#templateDelProductModal`,
-	methods: {
-		// 刪除產品
-		delProduct() {
-			axios
-				.delete(`${apiUrl}/api/${apiPath}/admin/product/${this.targetProduct.id}`)
-				.then((res) => {
-					this.$emit("get-product-list"); //向外層呼叫getProductList()
-					delProductModal.hide();
-				})
-				.catch((err) => {
-					alert(err.data.message);
-				});
-		},
-	},
-});
-
+app.component("userProductModal", userProductModal);
 app.mount("#app");
