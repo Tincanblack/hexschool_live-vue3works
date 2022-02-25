@@ -1,11 +1,11 @@
-import productDetailModal from "./components/productDetailModal.js";
 import { apiUrl, apiPath } from "./config.js";
+import productDetailModal from "./components/productDetailModal.js";
 
-const { defineRule, Form, Field, ErrorMessage, configure } = VeeValidate;
-const { required, email, min, max } = VeeValidateRules;
-const { localize, loadLocaleFromURL } = VeeValidateI18n;
+const { defineRule, Form, Field, ErrorMessage, configure } = VeeValidate; // 驗證
+const { required, email, min, max } = VeeValidateRules; // 規則
+const { localize, loadLocaleFromURL } = VeeValidateI18n; // 語系
 
-// 定義規則
+// 定義驗證規則
 defineRule("required", required);
 defineRule("email", email);
 defineRule("min", min);
@@ -19,7 +19,7 @@ configure({
 });
 
 const app = Vue.createApp({
-	// 將 VeeValidation 做區域註冊
+	// 將 Vee-Validate 做區域註冊
 	components: {
 		VForm: Form,
 		VField: Field,
@@ -29,7 +29,9 @@ const app = Vue.createApp({
 		return {
 			apiUrl,
 			apiPath,
-			cartsData: {},
+			cartsData: {
+				carts: []
+			},
 			products: [],
 			selectItemId: "",
 			isLoadingItem: "",
@@ -37,7 +39,7 @@ const app = Vue.createApp({
 				user: {
 					email: "",
 					name: "",
-					phone: "",
+					tel: "",
 					address: "",
 				},
 				message: "",
@@ -83,6 +85,7 @@ const app = Vue.createApp({
 			axios
 				.post(`${apiUrl}/api/${apiPath}/cart/`, { data })
 				.then((res) => {
+					alert(res.data.message);
 					this.getCartList();
 					this.isLoadingItem = "";
 				})
@@ -95,7 +98,7 @@ const app = Vue.createApp({
 			axios
 				.delete(`${apiUrl}/api/${apiPath}/carts`)
 				.then((res) => {
-					console.log(res);
+					alert(res.data.message);
 					this.getCartList();
 				})
 				.catch((err) => {
@@ -108,7 +111,7 @@ const app = Vue.createApp({
 			axios
 				.delete(`${apiUrl}/api/${apiPath}/cart/${id}`)
 				.then((res) => {
-					console.log(res);
+					alert(res.data.message);
 					this.getCartList();
 					this.isLoadingItem = "";
 				})
@@ -134,7 +137,19 @@ const app = Vue.createApp({
 					alert(err.data.message);
 				});
 		},
-		onSubmit() {},
+		createOrder() {
+			const order = this.form;
+			axios
+				.post(`${apiUrl}/api/${apiPath}/order`, { data: order })
+				.then((res) => {
+					alert(res.data.message);
+					this.$refs.form.resetForm();
+					this.getCartList();
+				})
+				.catch((err) => {
+					alert(err.data.message);
+				});
+		},
 	},
 	mounted() {
 		this.getProductsList();
